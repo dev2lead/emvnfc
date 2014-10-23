@@ -16,11 +16,16 @@ import android.nfc.tech.IsoDep;
 import java.util.Arrays;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 
 public class MainActivity extends Activity {
 
+    private class Cmd {
+
+        private byte[] SELECT = {(byte) 0x00, (byte) 0xA4, (byte) 0x04, (byte) 0x00};
+        private byte[] READ = {(byte) 0x00, (byte) 0xB2};
+        private byte[] GPO = {(byte) 0x80, (byte) 0xA8, (byte) 0x00, (byte) 0x00};
+    }
     private TextView view;
     private Intent intent;
     private Tag tag;
@@ -67,36 +72,26 @@ public class MainActivity extends Activity {
                         isodep.connect();
 
                         ByteArrayOutputStream aStream = new ByteArrayOutputStream();
-                        aStream.write(0x00);
-                        aStream.write(0xA4);
-                        aStream.write(0x04);
-                        aStream.write(0x00);
+                        aStream.write(new Cmd().SELECT);
                         aStream.write(new String("1PAY.SYS.DDF01").length());
                         aStream.write(new String("1PAY.SYS.DDF01").getBytes());
                         byte[] a = transceive(aStream.toByteArray());
 
                         ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-                        bStream.write(0x00);
-                        bStream.write(0xB2);
+                        bStream.write(new Cmd().READ);
                         bStream.write(tlv(a, (byte) 0x88)[0]);
                         bStream.write(tlv(a, (byte) 0x88)[0] << 3 | 4);
                         bStream.write(0x00);
                         byte[] b = transceive(bStream.toByteArray());
 
                         ByteArrayOutputStream cStream = new ByteArrayOutputStream();
-                        cStream.write(0x00);
-                        cStream.write(0xA4);
-                        cStream.write(0x04);
-                        cStream.write(0x00);
+                        cStream.write(new Cmd().SELECT);
                         cStream.write(tlv(b, (byte) 0x4F).length);
                         cStream.write(tlv(b, (byte) 0x4F));
                         byte[] c = transceive(cStream.toByteArray());
 
                         ByteArrayOutputStream dStream = new ByteArrayOutputStream();
-                        dStream.write(0x80);
-                        dStream.write(0xA8);
-                        dStream.write(0x00);
-                        dStream.write(0x00);
+                        dStream.write(new Cmd().GPO);
                         dStream.write(0x23);
                         dStream.write(0x83);
                         dStream.write(0x21);
