@@ -1,9 +1,9 @@
 EMV NFC
 ======
 
-EMV NFC is an Android Application that extracts your credit card informations through NFC.
+EMV NFC is an Android application that extracts your credit card informations through NFC.
 
-Currently readable cards :
+Current readable cards :
 - VISA
 - MASTERCARD ?
 - AMEX ?
